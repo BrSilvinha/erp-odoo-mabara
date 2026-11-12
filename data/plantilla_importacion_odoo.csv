@@ -1,0 +1,12 @@
+﻿default_code,name,categ_id,uom_id,type,is_storable,abc_class,old_codes,short_name,item_type,description
+MAT-0001,Cable concéntrico de aluminio 2x6 mm²,Goods / Cables y conductores eléctricos,m,consu,1,A,ID00184 / ID00210 / ID00181 / ID00102,CBL ALU 2x6,Material eléctrico,"Consolidación de registros MABARA, SUC y CIX"
+MAT-0002,Cintillos plásticos grandes bolsa x100,Goods / Fijación y sujeción,bolsa x100,consu,1,A,ID00043*,CINTILLO GR X100,Material eléctrico,Código histórico reutilizado para otros artículos; se asigna código maestro único
+MAT-0003,Templadores para tendido eléctrico,Goods / Fijación y sujeción,Units,consu,1,A,ID00068,TEMPLADORES,Material eléctrico,Descripción estandarizada
+MAT-0004,"Curva SAP 3/4"" x 90°",Goods / Tuberías y accesorios,Units,consu,1,A,ID00216 / ID00043*,CURVA SAP 3/4 90°,Material eléctrico,Se regulariza la inconsistencia del código ID00043
+MAT-0005,Precinto plástico tipo Excel,Goods / Precintos y sellado,Units,consu,1,B,ID00106 / ID00095 / ID00108,PRECINTO EXCEL,Material eléctrico,"Consolidación de registros CIX, SUC y CM"
+MAT-0006,"Tubo SAP 3/4"" x 3 m",Goods / Tuberías y accesorios,Units,consu,1,A,ID00072,TUBO SAP 3/4 X 3M,Material eléctrico,Cada unidad corresponde a un tubo de 3 m
+MAT-0007,"Interruptor termomagnético curva C bipolar 16 A, 400 V, ICC 3 kA",Goods / Protección y maniobra,Units,consu,1,B,ID00100 / ID00224,INT TM C 2P 16A,Material eléctrico,Consolidación de registros CIX y SUC
+MAT-0008,"Medidor eléctrico convencional 1Ø, clase 1, 2 hilos, 220 V, 5–60 A",Goods / Medición eléctrica,Units,consu,1,B,ID00104 / ID00093 / ID00107**,MEDIDOR CONV 1Ø,Material eléctrico,Consolidación por equivalencia técnica
+MAT-0009,Caja portamedidor 1Ø polimérica 320×180×120 mm,Goods / Cajas y gabinetes eléctricos,Units,consu,1,C,ID00098 / ID00088,CAJA PORTAMED 1Ø,Material eléctrico,Consolidación de registros CIX y SUC
+MAT-0010,Precinto de seguridad metálico T/FORZA,Goods / Precintos y sellado,Units,consu,1,B,ID00096,PRECINTO MET T/FORZA,Material eléctrico,Registro estandarizado
+MAT-0011,"Cachimba / curva SAP 3/4"" x 180°",Goods / Tuberías y accesorios,Units,consu,1,A,ID00198,CURVA SAP 3/4 180°,Material eléctrico,Registro estandarizado

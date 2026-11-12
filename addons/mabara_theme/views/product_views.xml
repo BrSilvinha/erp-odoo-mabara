@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ficha del material con la distribucion del maestro MABARA (Tabla IX del documento).
+         La pagina original "Informacion general" se oculta (no se elimina) para no romper
+         las vistas heredadas de otros modulos. -->
+    <record id="product_template_form_mabara_general" model="ir.ui.view">
+        <field name="name">product.template.form.mabara.general</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_information']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='general_information']" position="before">
+                <page string="Información general" name="mabara_general">
+                    <group>
+                        <group name="mabara_left">
+                            <field name="item_type" string="Tipo de ítem"/>
+                            <field name="route_ids" string="Política de inventario" widget="many2many_tags"/>
+                            <field name="default_code" string="Referencia interna"/>
+                            <field name="barcode" string="Código de barras"/>
+                            <field name="categ_id" string="Grupo / Familia"/>
+                            <field name="uom_id" string="Unidad de medida"/>
+                            <field name="uom_id" string="Unidad de medida de compra" readonly="1"/>
+                            <field name="currency_id" string="Moneda" readonly="1"/>
+                        </group>
+                        <group name="mabara_right">
+                            <field name="list_price" string="Precio de venta" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="taxes_id" string="Impuestos del cliente" widget="many2many_tags"/>
+                            <field name="standard_price" string="Costo" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="supplier_taxes_id" string="Impuestos del proveedor" widget="many2many_tags"/>
+                            <field name="categ_id" string="Categoría de producto"/>
+                            <field name="abc_class" string="Clasificación ABC"/>
+                            <field name="mabara_state" string="Estado"/>
+                            <field name="old_codes" string="Código(s) anterior(es)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="short_name" string="Descripción corta"/>
+                        <field name="description" string="Descripción interna" nolabel="0"/>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='mabara_policy']" position="attributes">
+                <attribute name="string">Política de inventario (EOQ / SS / ROP)</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,10 @@
+# secretos y configuracion local
+.env
+config/odoo.conf
+# artefactos
+scripts/setup_last_run.log
+__pycache__/
+*.pyc
+
+# documento academico (no se sube)
+ERP.pdf

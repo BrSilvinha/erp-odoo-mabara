@@ -1,0 +1,12 @@
+codigo_maestro,codigos_anteriores,descripcion_estandar,descripcion_corta,tipo_item,unidad,familia,abc,estado,observaciones
+MAT-0001,ID00184 / ID00210 / ID00181 / ID00102,Cable concéntrico de aluminio 2x6 mm²,CBL ALU 2x6,Material eléctrico,m,Cables y conductores eléctricos,A,Activo,"Consolidación de registros MABARA, SUC y CIX"
+MAT-0002,ID00043*,Cintillos plásticos grandes bolsa x100,CINTILLO GR X100,Material eléctrico,bolsa x100,Fijación y sujeción,A,Activo,"Código histórico reutilizado para otros artículos; se asigna código maestro único"
+MAT-0003,ID00068,Templadores para tendido eléctrico,TEMPLADORES,Material eléctrico,unidad,Fijación y sujeción,A,Activo,Descripción estandarizada
+MAT-0004,ID00216 / ID00043*,"Curva SAP 3/4"" x 90°",CURVA SAP 3/4 90°,Material eléctrico,unidad,Tuberías y accesorios,A,Activo,Se regulariza la inconsistencia del código ID00043
+MAT-0005,ID00106 / ID00095 / ID00108,Precinto plástico tipo Excel,PRECINTO EXCEL,Material eléctrico,unidad,Precintos y sellado,B,Activo,"Consolidación de registros CIX, SUC y CM"
+MAT-0006,ID00072,"Tubo SAP 3/4"" x 3 m",TUBO SAP 3/4 X 3M,Material eléctrico,unidad,Tuberías y accesorios,A,Activo,Cada unidad corresponde a un tubo de 3 m
+MAT-0007,ID00100 / ID00224,"Interruptor termomagnético curva C bipolar 16 A, 400 V, ICC 3 kA",INT TM C 2P 16A,Material eléctrico,unidad,Protección y maniobra,B,Activo,Consolidación de registros CIX y SUC
+MAT-0008,ID00104 / ID00093 / ID00107**,"Medidor eléctrico convencional 1Ø, clase 1, 2 hilos, 220 V, 5–60 A",MEDIDOR CONV 1Ø,Material eléctrico,unidad,Medición eléctrica,B,Activo,Consolidación por equivalencia técnica
+MAT-0009,ID00098 / ID00088,Caja portamedidor 1Ø polimérica 320×180×120 mm,CAJA PORTAMED 1Ø,Material eléctrico,unidad,Cajas y gabinetes eléctricos,C,Activo,Consolidación de registros CIX y SUC
+MAT-0010,ID00096,Precinto de seguridad metálico T/FORZA,PRECINTO MET T/FORZA,Material eléctrico,unidad,Precintos y sellado,B,Activo,Registro estandarizado
+MAT-0011,ID00198,"Cachimba / curva SAP 3/4"" x 180°",CURVA SAP 3/4 180°,Material eléctrico,unidad,Tuberías y accesorios,A,Activo,Registro estandarizado

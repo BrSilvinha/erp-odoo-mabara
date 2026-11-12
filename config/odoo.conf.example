@@ -1,0 +1,9 @@
+[options]
+admin_passwd = <ODOO_ADMIN_PASSWD de .env>
+db_host = db
+db_port = 5432
+db_user = odoo
+db_password = <POSTGRES_PASSWORD de .env>
+addons_path = /mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+list_db = True
+dbfilter = ^mabara_erp$

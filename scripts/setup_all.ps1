@@ -1,0 +1,23 @@
+# Reconstruye todo el entorno MABARA ERP desde cero (Fases 3-8).
+# ATENCION: -Reset elimina los volumenes de ESTE proyecto (mabara_erp_*), no los de otros proyectos.
+param([switch]$Reset)
+$ErrorActionPreference = "Continue"
+Set-Location (Split-Path $PSScriptRoot -Parent)
+
+if ($Reset) { docker compose down -v }
+docker compose up -d db
+Write-Host "Esperando PostgreSQL..."
+do { Start-Sleep 2 } until ((docker inspect -f '{{.State.Health.Status}}' mabara_db) -eq "healthy")
+
+docker compose up -d odoo
+do { Start-Sleep 3; try { $ok = (Invoke-WebRequest http://localhost:8069/web/login -UseBasicParsing).StatusCode -eq 200 } catch { $ok = $false } } until ($ok)
+
+python scripts/01_create_db.py
+Write-Host "Instalando modulos (stock, purchase, sale, account, l10n_pe, mabara_service_order, mabara_theme)..."
+docker compose run --rm -T odoo odoo -d mabara_erp -i stock,purchase,purchase_requisition,sale_management,account,l10n_pe,mabara_service_order,mabara_theme --stop-after-init --log-level=warn
+docker compose restart odoo
+do { Start-Sleep 3; try { $ok = (Invoke-WebRequest http://localhost:8069/web/login -UseBasicParsing).StatusCode -eq 200 } catch { $ok = $false } } until ($ok)
+
+python scripts/02_configure_and_load.py
+python scripts/03_run_scenarios.py
+Write-Host "Listo: http://localhost:8069  (credenciales en .env)"

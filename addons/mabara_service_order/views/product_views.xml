@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_mabara" model="ir.ui.view">
+        <field name="name">product.template.form.mabara</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Maestro MABARA / Politica de inventario" name="mabara_policy">
+                    <group>
+                        <group string="Maestro unico de materiales">
+                            <field name="abc_class"/>
+                            <field name="old_codes"/>
+                            <field name="short_name"/>
+                            <field name="item_type"/>
+                        </group>
+                        <group string="Parametros del documento">
+                            <field name="annual_demand"/>
+                            <field name="holding_rate"/>
+                            <field name="order_cost"/>
+                            <field name="monthly_demand"/>
+                            <field name="monthly_sigma"/>
+                            <field name="lead_time_months"/>
+                            <field name="service_z"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Valores oficiales (documento)">
+                            <field name="eoq_official"/>
+                            <field name="safety_stock_official"/>
+                            <field name="reorder_point_official"/>
+                        </group>
+                        <group string="Verificacion con formulas">
+                            <field name="holding_cost"/>
+                            <field name="eoq_check"/>
+                            <field name="ss_check"/>
+                            <field name="rop_check"/>
+                            <field name="lead_time_days"/>
+                        </group>
+                    </group>
+                    <button name="action_apply_inventory_policy" type="object" class="btn-primary"
+                            string="Aplicar politica a regla de reabastecimiento"
+                            invisible="not reorder_point_official"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

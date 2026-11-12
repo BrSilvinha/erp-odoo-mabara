@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_mabara_root" name="Servicios MABARA" sequence="5"/>
+    <menuitem id="menu_service_order" name="Ordenes de Servicio" parent="menu_mabara_root"
+              action="action_service_order" sequence="10"/>
+    <menuitem id="menu_purchase_request" name="Solicitudes de Compra" parent="menu_mabara_root"
+              action="action_purchase_request" sequence="20"/>
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_service_order" model="ir.sequence">
+        <field name="name">Orden de Servicio</field>
+        <field name="code">mabara.service.order</field>
+        <field name="prefix">OS/</field>
+        <field name="padding">5</field>
+    </record>
+    <record id="seq_purchase_request" model="ir.sequence">
+        <field name="name">Solicitud de Compra</field>
+        <field name="code">mabara.purchase.request</field>
+        <field name="prefix">SC/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

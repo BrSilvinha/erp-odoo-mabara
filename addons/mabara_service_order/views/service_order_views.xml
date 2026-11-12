@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_service_order_list" model="ir.ui.view">
+        <field name="name">mabara.service.order.list</field>
+        <field name="model">mabara.service.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="request_date"/>
+                <field name="partner_id"/>
+                <field name="responsible_id"/>
+                <field name="scheduled_date"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_service_order_form" model="ir.ui.view">
+        <field name="name">mabara.service.order.form</field>
+        <field name="model">mabara.service.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_issue" type="object" string="Emitir OS" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_check_stock" type="object" string="Verificar existencias y reservar"
+                            class="btn-primary" invisible="state != 'issued'"/>
+                    <button name="action_create_purchase_request" type="object" string="Generar solicitud de compra"
+                            class="btn-primary" invisible="state != 'waiting_supply'"/>
+                    <button name="action_reserve" type="object" string="Reintentar reserva"
+                            invisible="state != 'waiting_supply'"/>
+                    <button name="action_execute" type="object" string="Registrar ejecucion"
+                            class="btn-primary" invisible="state != 'delivered'"/>
+                    <button name="action_close" type="object" string="Cerrar OS"
+                            class="btn-primary" invisible="state != 'executed'"/>
+                    <button name="action_cancel" type="object" string="Cancelar"
+                            invisible="state in ('executed', 'closed', 'cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,issued,waiting_supply,ready,delivered,executed,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object" class="oe_stat_button"
+                                icon="fa-truck" invisible="picking_count == 0">
+                            <field name="picking_count" widget="statinfo" string="Despachos"/>
+                        </button>
+                        <button name="action_view_requests" type="object" class="oe_stat_button"
+                                icon="fa-file-text-o" invisible="request_count == 0">
+                            <field name="request_count" widget="statinfo" string="Sol. compra"/>
+                        </button>
+                        <button name="action_view_purchases" type="object" class="oe_stat_button"
+                                icon="fa-shopping-cart" invisible="purchase_count == 0">
+                            <field name="purchase_count" widget="statinfo" string="Compras"/>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="responsible_id"/>
+                        </group>
+                        <group>
+                            <field name="request_date"/>
+                            <field name="scheduled_date"/>
+                            <field name="execution_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="service_description" readonly="state != 'draft'"/>
+                    </group>
+                    <notebook>
+                        <page string="Materiales requeridos">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="product_qty"/>
+                                    <field name="available_qty"/>
+                                    <field name="reserved_qty"/>
+                                    <field name="shortage_qty" decoration-danger="shortage_qty > 0"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ejecucion">
+                            <field name="execution_notes" placeholder="Registro del servicio ejecutado..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_service_order" model="ir.actions.act_window">
+        <field name="name">Ordenes de Servicio</field>
+        <field name="res_model">mabara.service.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

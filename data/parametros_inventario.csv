@@ -1,0 +1,4 @@
+codigo_maestro,demanda_anual_D,costo_unitario_C,tasa_mantenimiento,costo_pedido_S,eoq,demanda_mensual_d,desv_mensual,lead_time_meses,z,stock_seguridad,punto_reorden
+MAT-0001,148242,6.50,0.15,63.62,4398,12353.50,825.20,0.23,1.645,651,3492
+MAT-0002,66866,6.20,0.15,63.62,3025,5572.17,453.14,0.23,1.645,357,1639
+MAT-0003,44245,6.10,0.15,63.62,2480,3687.08,216.19,0.23,1.645,171,1019

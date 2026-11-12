@@ -1,0 +1,20 @@
+{
+    'name': 'MABARA - Ordenes de Servicio y Politica de Inventario',
+    'version': '19.0.1.0.0',
+    'category': 'Services',
+    'author': 'Proyecto ERP MABARA',
+    'summary': 'OS con requerimiento de materiales, solicitud de compra y parametros EOQ/SS/ROP',
+    'description': 'Implementa MABARA-OP-PRO-01/02/03 sobre Inventario y Compras de Odoo.',
+    'depends': ['stock', 'purchase', 'purchase_requisition', 'mail'],
+    'data': [
+        'security/ir.model.access.csv',
+        'data/sequence.xml',
+        'data/stock_data.xml',
+        'views/service_order_views.xml',
+        'views/purchase_request_views.xml',
+        'views/product_views.xml',
+        'views/menus.xml',
+    ],
+    'application': True,
+    'license': 'LGPL-3',
+}

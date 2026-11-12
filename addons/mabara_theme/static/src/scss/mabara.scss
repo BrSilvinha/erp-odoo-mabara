@@ -1,0 +1,99 @@
+$mabara-blue: #1d63d8;
+$mabara-purple: #6f42a0;
+$mabara-text: #374151;
+
+// ---- Barra superior blanca con logo y menu horizontal --------------------------------
+// Odoo pinta cada entrada con --NavBar-entry-backgroundColor (= color primario).
+// Se redefinen las variables para que el menu quede sobre fondo blanco y el resaltado
+// al pasar el cursor sea solo el texto en azul con una linea fina inferior (sin relleno).
+.o_main_navbar,
+.o_web_client.o-mail-discuss-systray-menu-open .o_main_navbar {
+    --NavBar-entry-backgroundColor: transparent;
+    --NavBar-entry-backgroundColor--hover: transparent;
+    --NavBar-entry-backgroundColor--focus: transparent;
+    --NavBar-entry-backgroundColor--active: transparent;
+    --NavBar-entry-color: #{$mabara-text};
+    --NavBar-entry-color--hover: #{$mabara-blue};
+    --NavBar-entry-color--active: #{$mabara-blue};
+    --NavBar-brand-color: #{$mabara-text};
+    --NavBar-entry-borderColor-active: transparent;
+
+    background: #fff !important;
+    border-bottom: 1px solid #e4e7ec;
+    box-shadow: none;
+
+    // logo de la compania a la izquierda (se carga desde Configuracion > Companias)
+    &::before {
+        content: '';
+        flex: none;
+        width: 170px;
+        height: 100%;
+        margin: 0 24px 0 16px;
+        background: url('/web/binary/company_logo') no-repeat left center / contain;
+    }
+
+    // un solo "app": se oculta el selector de aplicaciones y el nombre de la app
+    .o_navbar_apps_menu,
+    .o_menu_brand {
+        display: none !important;
+    }
+
+    .o_menu_sections .o_nav_entry,
+    .o_menu_sections .dropdown-toggle,
+    .o_menu_systray .o_nav_entry,
+    .o_menu_systray .dropdown-toggle,
+    .o_navbar_breadcrumbs,
+    .o_navbar_breadcrumbs .btn {
+        background: transparent !important;
+        color: $mabara-text !important;
+        font-weight: 500;
+    }
+
+    .o_menu_sections .o_nav_entry:hover,
+    .o_menu_sections .o_nav_entry:focus,
+    .o_menu_sections .dropdown-toggle:hover,
+    .o_menu_sections .dropdown-toggle:focus,
+    .o_menu_sections .dropdown-toggle.show,
+    .o_menu_systray .o_nav_entry:hover,
+    .o_menu_systray .dropdown-toggle:hover,
+    .o_menu_systray .dropdown-toggle.show {
+        background: transparent !important;
+        color: $mabara-blue !important;
+        box-shadow: inset 0 -2px 0 $mabara-blue;
+    }
+}
+
+// ---- Casillas moradas, botones y enlaces azules ----------------------------------------
+.form-check-input:checked,
+.o_field_boolean .form-check-input:checked,
+.o-checkbox .form-check-input:checked {
+    background-color: $mabara-purple !important;
+    border-color: $mabara-purple !important;
+}
+
+.btn-primary {
+    --btn-bg: #{$mabara-blue};
+    --btn-border-color: #{$mabara-blue};
+    --btn-hover-bg: #{darken($mabara-blue, 7%)};
+    --btn-hover-border-color: #{darken($mabara-blue, 7%)};
+    --btn-active-bg: #{darken($mabara-blue, 10%)};
+    --btn-active-border-color: #{darken($mabara-blue, 10%)};
+    background-color: $mabara-blue;
+    border-color: $mabara-blue;
+}
+
+.o_form_view .oe_stat_button .o_stat_value,
+.o_form_view a {
+    color: $mabara-blue;
+}
+
+.o_form_view .o_notebook .nav-link.active {
+    color: $mabara-blue;
+    border-bottom-color: $mabara-blue;
+}
+
+// estado "Activo" en verde (ficha de material)
+.o_field_widget[name='mabara_state'] {
+    color: #15803d;
+    font-weight: 500;
+}
