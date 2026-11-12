@@ -3,6 +3,7 @@
 param([switch]$Reset)
 $ErrorActionPreference = "Continue"
 Set-Location (Split-Path $PSScriptRoot -Parent)
+& (Join-Path $PSScriptRoot "00_init_env.ps1")
 
 if ($Reset) { docker compose down -v }
 docker compose up -d db
@@ -20,4 +21,6 @@ do { Start-Sleep 3; try { $ok = (Invoke-WebRequest http://localhost:8069/web/log
 
 python scripts/02_configure_and_load.py
 python scripts/03_run_scenarios.py
-Write-Host "Listo: http://localhost:8069  (credenciales en .env)"
+$envv = @{}; Get-Content .env | Where-Object { $_ -match "=" } | ForEach-Object { $k, $v = $_ -split "=", 2; $envv[$k] = $v }
+Write-Host "Listo: http://localhost:8069"
+Write-Host "Usuario: $($envv['ODOO_USER'])   Clave: $($envv['ODOO_USER_PASSWORD'])   (tambien en el archivo .env)"
