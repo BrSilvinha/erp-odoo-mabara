@@ -3,3 +3,4 @@ access_mabara_service_order,mabara.service.order,model_mabara_service_order,base
 access_mabara_service_order_line,mabara.service.order.line,model_mabara_service_order_line,base.group_user,1,1,1,1
 access_mabara_purchase_request,mabara.purchase.request,model_mabara_purchase_request,base.group_user,1,1,1,1
 access_mabara_purchase_request_line,mabara.purchase.request.line,model_mabara_purchase_request_line,base.group_user,1,1,1,1
+access_mabara_code_request,mabara.code.request,model_mabara_code_request,base.group_user,1,1,1,1

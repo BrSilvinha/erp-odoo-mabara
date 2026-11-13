@@ -60,6 +60,7 @@ Al terminar verás algo así:
 RESULTADO A: OK
 RESULTADO B: OK
 RESULTADO C: OK
+RESULTADO D: OK ... RESULTADO H: OK
 RESULTADO POLITICAS: OK
 Listo: http://localhost:8069
 Usuario: admin@mabara.demo   Clave: ********   (tambien en el archivo .env)
@@ -81,7 +82,7 @@ Si ves una pantalla vieja o sin colores, recarga con **Ctrl + F5**.
 
 ## 5. Qué probar (recorrido rápido)
 
-El menú superior es: **Inventario · Ventas · Compras · Contabilidad · Informes · Configuración**.
+El menú superior es: **Inventario · Ventas · Compras · Contabilidad · Informes · Configuración**, y a la izquierda hay un menú lateral (Inventario, Información general, Operaciones, Productos, Informes, Configuración).
 
 | # | Dónde | Qué verás |
 |---|---|---|
@@ -91,6 +92,8 @@ El menú superior es: **Inventario · Ventas · Compras · Contabilidad · Infor
 | 4 | **Compras ▸ Solicitudes de compra** | Solicitud del escenario B, con sus cotizaciones y la orden de compra |
 | 5 | Inventario ▸ Transferencias | Recepción de compra y despachos a las órdenes de servicio |
 | 6 | Compras ▸ Órdenes de compra | Una RFQ generada automáticamente por la regla de reabastecimiento (escenario C) |
+
+Además de A, B y C se simulan los flujos de los diagramas: D (solicitud de OS no conforme), E (solicitud de compra devuelta), F (devolución de materiales), G (solicitud de código de material) y H (recepción el mismo día y con diferencias).
 
 Para **ejecutar los escenarios tú mismo, paso a paso en pantalla**, sigue `docs\GUIA_DEMOSTRACION.md`.
 

@@ -97,3 +97,101 @@ $mabara-text: #374151;
     color: #15803d;
     font-weight: 500;
 }
+
+// ---- Franja de indicadores de la ficha de material -------------------------------------
+.mabara_kpis {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin: 4px 0 16px;
+
+    .mabara_kpi {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 8px 10px;
+        border: 1px solid #e4e7ec;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .mabara_kpi_value,
+    .mabara_kpi_value .o_field_widget {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: $mabara-blue;
+        width: auto;
+    }
+
+    .mabara_kpi_label {
+        font-size: 0.78rem;
+        color: #667085;
+    }
+}
+
+// ---- Menu lateral (como la captura de referencia) --------------------------------------
+$mabara-sidebar-width: 230px;
+
+.mabara_sidebar {
+    position: fixed;
+    top: var(--mabara-navbar-height, 46px);
+    left: 0;
+    bottom: 0;
+    width: $mabara-sidebar-width;
+    z-index: 5;
+    overflow-y: auto;
+    padding: 14px 10px;
+    background: #fff;
+    border-right: 1px solid #e4e7ec;
+    font-size: 0.95rem;
+
+    .mabara_nav_item,
+    .mabara_nav_child {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 12px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: $mabara-text;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover {
+            background: #f2f4f7;
+        }
+
+        &.active {
+            background: #e8f0fe;
+            color: $mabara-blue;
+            font-weight: 600;
+        }
+
+        .fa {
+            width: 18px;
+            text-align: center;
+            color: #667085;
+        }
+
+        &.active .fa {
+            color: $mabara-blue;
+        }
+
+        .mabara_caret {
+            margin-left: auto;
+            font-size: 0.7rem;
+        }
+    }
+
+    .mabara_nav_child {
+        padding-left: 40px;
+        font-size: 0.9rem;
+    }
+}
+
+body.mabara_has_sidebar .o_action_manager {
+    margin-left: $mabara-sidebar-width;
+}

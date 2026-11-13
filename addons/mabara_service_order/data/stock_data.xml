@@ -13,4 +13,13 @@
         <field name="default_location_src_id" ref="stock.stock_location_stock"/>
         <field name="default_location_dest_id" ref="location_consumo_os"/>
     </record>
+    <!-- Devolucion de materiales no utilizados (Fig. 3): consumo OS -> almacen -->
+    <record id="picking_type_devolucion_os" model="stock.picking.type">
+        <field name="name">Devolucion de materiales de OS</field>
+        <field name="code">incoming</field>
+        <field name="sequence_code">OSRET</field>
+        <field name="warehouse_id" ref="stock.warehouse0"/>
+        <field name="default_location_src_id" ref="location_consumo_os"/>
+        <field name="default_location_dest_id" ref="stock.stock_location_stock"/>
+    </record>
 </odoo>

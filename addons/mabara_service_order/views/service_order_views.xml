@@ -8,10 +8,32 @@
                 <field name="name"/>
                 <field name="request_date"/>
                 <field name="partner_id"/>
+                <field name="project" optional="show"/>
+                <field name="service_type" optional="show"/>
                 <field name="responsible_id"/>
+                <field name="crew" optional="show"/>
                 <field name="scheduled_date"/>
                 <field name="state" widget="badge"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_service_order_search" model="ir.ui.view">
+        <field name="name">mabara.service.order.search</field>
+        <field name="model">mabara.service.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="project"/>
+                <filter name="f_open" string="Abiertas" domain="[('state', 'not in', ('closed', 'cancel'))]"/>
+                <filter name="f_supply" string="Por abastecer" domain="[('state', '=', 'waiting_supply')]"/>
+                <filter name="f_correction" string="Por corregir" domain="[('state', '=', 'correction')]"/>
+                <group>
+                    <filter name="g_state" string="Estado" context="{'group_by': 'state'}"/>
+                    <filter name="g_partner" string="Cliente" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -21,16 +43,22 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_issue" type="object" string="Emitir OS" class="btn-primary"
+                    <button name="action_issue" type="object" string="Emitir OS (solicitud conforme)" class="btn-primary"
                             invisible="state != 'draft'"/>
+                    <button name="action_request_correction" type="object" string="Solicitar corrección"
+                            invisible="state != 'draft'"/>
+                    <button name="action_resubmit" type="object" string="Reenviar corregida" class="btn-primary"
+                            invisible="state != 'correction'"/>
                     <button name="action_check_stock" type="object" string="Verificar existencias y reservar"
                             class="btn-primary" invisible="state != 'issued'"/>
                     <button name="action_create_purchase_request" type="object" string="Generar solicitud de compra"
                             class="btn-primary" invisible="state != 'waiting_supply'"/>
                     <button name="action_reserve" type="object" string="Reintentar reserva"
                             invisible="state != 'waiting_supply'"/>
-                    <button name="action_execute" type="object" string="Registrar ejecucion"
+                    <button name="action_execute" type="object" string="Registrar ejecución"
                             class="btn-primary" invisible="state != 'delivered'"/>
+                    <button name="action_return_materials" type="object" string="Devolver materiales no utilizados"
+                            invisible="state not in ('delivered', 'executed')"/>
                     <button name="action_close" type="object" string="Cerrar OS"
                             class="btn-primary" invisible="state != 'executed'"/>
                     <button name="action_cancel" type="object" string="Cancelar"
@@ -54,23 +82,31 @@
                         </button>
                     </div>
                     <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group invisible="state != 'correction' and not correction_note" string="Revisión de la solicitud">
+                        <field name="correction_note" placeholder="Que debe corregir o completar el Area Comercial..."
+                               readonly="state not in ('draft', 'correction')"/>
+                    </group>
                     <group>
                         <group>
-                            <field name="partner_id" readonly="state != 'draft'"/>
-                            <field name="responsible_id"/>
+                            <field name="partner_id" readonly="state not in ('draft', 'correction')"/>
+                            <field name="project" readonly="state not in ('draft', 'correction')"/>
+                            <field name="service_type" readonly="state not in ('draft', 'correction')"/>
+                            <field name="service_location" readonly="state not in ('draft', 'correction')"/>
                         </group>
                         <group>
                             <field name="request_date"/>
                             <field name="scheduled_date"/>
+                            <field name="responsible_id"/>
+                            <field name="crew"/>
                             <field name="execution_date"/>
                         </group>
                     </group>
                     <group>
-                        <field name="service_description" readonly="state != 'draft'"/>
+                        <field name="service_description" readonly="state not in ('draft', 'correction')"/>
                     </group>
                     <notebook>
                         <page string="Materiales requeridos">
-                            <field name="line_ids" readonly="state != 'draft'">
+                            <field name="line_ids" readonly="state not in ('draft', 'correction')">
                                 <list editable="bottom">
                                     <field name="product_id"/>
                                     <field name="uom_id"/>
@@ -81,7 +117,7 @@
                                 </list>
                             </field>
                         </page>
-                        <page string="Ejecucion">
+                        <page string="Ejecución">
                             <field name="execution_notes" placeholder="Registro del servicio ejecutado..."/>
                         </page>
                     </notebook>

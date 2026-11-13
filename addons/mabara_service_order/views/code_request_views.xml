@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_code_request_list" model="ir.ui.view">
+        <field name="name">mabara.code.request.list</field>
+        <field name="model">mabara.code.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="origin"/>
+                <field name="requested_by"/>
+                <field name="assigned_code"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_code_request_form" model="ir.ui.view">
+        <field name="name">mabara.code.request.form</field>
+        <field name="model">mabara.code.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_request" type="object" string="Solicitar código al Administrador del ERP"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_create_code" type="object" string="Crear código en el maestro"
+                            class="btn-primary" invisible="state != 'requested'"/>
+                    <button name="action_communicate" type="object" string="Comunicar disponibilidad a Almacén"
+                            class="btn-primary" invisible="state != 'created'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="description" readonly="state != 'draft'"/>
+                            <field name="short_name" readonly="state != 'draft'"/>
+                            <field name="uom_id" readonly="state != 'draft'"/>
+                            <field name="categ_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="origin" readonly="state != 'draft'"/>
+                            <field name="requested_by"/>
+                            <field name="assigned_code" readonly="state not in ('draft', 'requested')"/>
+                            <field name="product_tmpl_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_code_request" model="ir.actions.act_window">
+        <field name="name">Solicitudes de código de material</field>
+        <field name="res_model">mabara.code.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Recepcion (Fig. 3): documento de respaldo, fecha de recepcion y diferencias -->
+    <record id="view_picking_form_mabara" model="ir.ui.view">
+        <field name="name">stock.picking.form.mabara</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="service_order_id" invisible="not service_order_id"/>
+                <field name="supplier_doc" invisible="picking_type_code != 'incoming'"/>
+                <field name="receipt_date" invisible="picking_type_code != 'incoming'"/>
+                <field name="difference_note" invisible="not difference_note"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

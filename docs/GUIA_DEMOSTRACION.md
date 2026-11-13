@@ -36,8 +36,18 @@ Basada en `ERP.pdf` (Tablas II, V, VIII, XII–XVI y XVIII). Odoo 19.0 Community
 ## 4. Escenario C (extra) – Disparo por ROP/EOQ
 Despachar a una OS 1 210 m de `MAT-0001` (4 700 → 3 490 m, por debajo del ROP 3 492). Ejecutar **Inventario ▸ Operaciones ▸ Reabastecimiento ▸ Ejecutar programador** (es la tarea programada «Procurement: run scheduler»): se genera una RFQ de ≈ 4 400 m (hasta ROP + EOQ).
 
+## 4b. Flujos de los diagramas (Fig. 1, 2 y 3)
+- **D – Solicitud no conforme (Fig. 1, paso 2.a)**: en una OS en estado *Solicitud* escribe el «Motivo de corrección» y pulsa **Solicitar corrección** → estado *Por corregir*; el Área Comercial completa y pulsa **Reenviar corregida**; luego **Emitir OS** (exige responsable o cuadrilla).
+- **E – Solicitud de compra no conforme (Fig. 2, paso 4.a)**: en la solicitud *Por revisar* escribe el «Motivo de devolución» y pulsa **Devolver para corrección** → *Devuelta*; corrige y **Reenviar corregida**.
+- **F – Devolución de materiales (Fig. 3)**: en una OS con materiales entregados pulsa **Devolver materiales no utilizados**; ajusta la cantidad realmente devuelta y valida el ingreso (tipo «Devolución de materiales de OS»).
+- **G – Material no codificado (Fig. 3)**: Inventario ▸ **Solicitudes de código de material**: Almacén solicita → el Administrador del ERP asigna el código y lo crea en el maestro → se comunica la disponibilidad.
+- **H – Recepción (Fig. 3)**: en la recepción de una OC, informa el documento de respaldo (guía de remisión) y la fecha física; el ingreso se bloquea si la fecha no es hoy, y si se recibe distinto a lo pedido la diferencia queda registrada y comunicada en la OC (Compras).
+
 ## 5. Políticas que se pueden probar
 - **Política 8**: validar una entrega estándar (WH/OUT) sin OS → error “toda salida de materiales debe estar asociada a una Orden de Servicio”.
+- **Política 3**: enviar a revisión una solicitud de compra cuya OS aún no verificó existencias → error.
+- **Política 4**: solicitud de compra sin OS → error.
+- **Política 7**: validar una recepción de proveedor sin Orden de Compra → error.
 - **Políticas 4/5**: confirmar una OC creada a mano, sin solicitud ni regla → error.
 - Ejecutar una OS sin materiales entregados → error.
 
@@ -45,6 +55,9 @@ Despachar a una OS 1 210 m de `MAT-0001` (4 700 → 3 490 m, por debajo del ROP 
 `scripts\setup_all.ps1 -Reset` reconstruye y ejecuta los tres escenarios. La salida queda en `evidencias\escenarios.md`.
 
 ## 7. Interfaz (módulo `mabara_theme`)
+- **Menú lateral izquierdo** como la captura de referencia (Inventario, Información general, Operaciones, Productos ▸ Productos / Variantes / Reglas de reabastecimiento / Unidades / Categorías, Informes, Configuración).
+- Ficha de material con franja de indicadores (demanda, EOQ, SS, ROP, lead time, clase ABC) y pestañas Información general / Inventario / Compras / Ubicaciones / Contabilidad / Notas.
+- Lista de **Reglas de reabastecimiento** con código, descripción, unidad, ABC, demanda, EOQ, SS, ROP, lead time y estado.
 - Barra superior blanca con el logo, menú horizontal único **Inventario · Ventas · Compras · Contabilidad · Informes · Configuración** y el nombre de la empresa junto al usuario.
 - Azul corporativo en botones y enlaces, casillas moradas, ficha de material con los campos del maestro (Tabla IX) en «Información general».
 - Logo: `addons\mabara_theme\static\img\logo_mabara.png` (se carga al reconstruir). Para cambiarlo: Configuración ▸ Compañías, y guardar el mismo archivo en esa ruta para que no se pierda con `-Reset`.

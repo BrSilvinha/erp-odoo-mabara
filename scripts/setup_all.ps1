@@ -20,6 +20,7 @@ docker compose restart odoo
 do { Start-Sleep 3; try { $ok = (Invoke-WebRequest http://localhost:8069/web/login -UseBasicParsing).StatusCode -eq 200 } catch { $ok = $false } } until ($ok)
 
 python scripts/02_configure_and_load.py
+python scripts/05_load_product_images.py
 python scripts/03_run_scenarios.py
 $envv = @{}; Get-Content .env | Where-Object { $_ -match "=" } | ForEach-Object { $k, $v = $_ -split "=", 2; $envv[$k] = $v }
 Write-Host "Listo: http://localhost:8069"

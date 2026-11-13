@@ -6,27 +6,37 @@ from odoo.exceptions import UserError
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    abc_class = fields.Selection([('A', 'A'), ('B', 'B'), ('C', 'C')], 'Clasificacion ABC')
+    abc_class = fields.Selection([('A', 'A'), ('B', 'B'), ('C', 'C')], 'Clasificación ABC')
     old_codes = fields.Char('Codigos anteriores')
     short_name = fields.Char('Descripcion corta')
-    item_type = fields.Char('Tipo de item')
+    item_type = fields.Selection([('Material eléctrico', 'Material eléctrico'), ('Otro', 'Otro')],
+                                 'Tipo de item', default='Material eléctrico')
+    mabara_location_id = fields.Many2one('stock.location', 'Ubicación de inventario',
+                                         compute='_compute_mabara_location', store=True, readonly=False,
+                                         domain=[('usage', '=', 'internal')])
     # Parametros OFICIALES (Tablas XI-XIII del documento)
-    annual_demand = fields.Float('Demanda anual proyectada (D)')
+    annual_demand = fields.Float('Demanda anual proyectada (D)', digits=(16, 0))
     holding_rate = fields.Float('Tasa de mantenimiento', default=0.15)
     order_cost = fields.Float('Costo por pedido (S)')
     monthly_demand = fields.Float('Demanda mensual (d)')
     monthly_sigma = fields.Float('Desv. estandar mensual')
     lead_time_months = fields.Float('Lead time (meses)', digits=(6, 2))
     service_z = fields.Float('Z (nivel de servicio)', default=1.645, digits=(6, 3))
-    eoq_official = fields.Float('EOQ (documento)')
-    safety_stock_official = fields.Float('Stock de seguridad (documento)')
-    reorder_point_official = fields.Float('Punto de reorden (documento)')
+    eoq_official = fields.Float('EOQ (documento)', digits=(16, 0))
+    safety_stock_official = fields.Float('Stock de seguridad (documento)', digits=(16, 0))
+    reorder_point_official = fields.Float('Punto de reorden (documento)', digits=(16, 0))
     # Verificacion con las formulas del documento
     holding_cost = fields.Float('H = costo x tasa', compute='_compute_policy_check', digits=(10, 3))
     eoq_check = fields.Float('EOQ recalculado', compute='_compute_policy_check')
     ss_check = fields.Float('SS recalculado', compute='_compute_policy_check')
     rop_check = fields.Float('ROP recalculado', compute='_compute_policy_check')
     lead_time_days = fields.Integer('Lead time (dias)', compute='_compute_policy_check')
+
+    @api.depends('company_id')
+    def _compute_mabara_location(self):
+        wh = self.env['stock.warehouse'].search([('company_id', '=', self.env.company.id)], limit=1)
+        for t in self:
+            t.mabara_location_id = t.mabara_location_id or wh.lot_stock_id
 
     @api.depends('annual_demand', 'holding_rate', 'order_cost', 'standard_price', 'monthly_demand',
                  'monthly_sigma', 'lead_time_months', 'service_z')
@@ -64,3 +74,27 @@ class ProductTemplate(models.Model):
                 self.env['stock.warehouse.orderpoint'].create(vals)
             t.seller_ids.write({'delay': t.lead_time_days})
         return True
+
+
+class StockWarehouseOrderpoint(models.Model):
+    _inherit = 'stock.warehouse.orderpoint'
+
+    m_code = fields.Char('Código maestro', related='product_id.default_code')
+    m_name = fields.Char('Descripción estándar', related='product_id.name')
+    m_uom = fields.Char('Unidad de medida', related='product_id.uom_id.name')
+    m_abc = fields.Selection(related='product_id.product_tmpl_id.abc_class', string='Clasificación ABC')
+    m_demand = fields.Float('Demanda anual proyectada', related='product_id.product_tmpl_id.annual_demand',
+                            digits=(16, 0))
+    m_eoq = fields.Float('EOQ (cantidad a pedir)', related='product_id.product_tmpl_id.eoq_official',
+                         digits=(16, 0))
+    m_ss = fields.Float('Stock de seguridad', related='product_id.product_tmpl_id.safety_stock_official',
+                        digits=(16, 0))
+    m_rop = fields.Float('Punto de reorden (ROP)', related='product_id.product_tmpl_id.reorder_point_official',
+                         digits=(16, 0))
+    m_lead = fields.Float('Lead time (meses)', related='product_id.product_tmpl_id.lead_time_months',
+                          digits=(6, 2))
+    m_state = fields.Char('Estado', compute='_compute_m_state')
+
+    def _compute_m_state(self):
+        for o in self:
+            o.m_state = 'Activo' if o.active else 'Archivado'

@@ -13,8 +13,9 @@ class MabaraPurchaseRequest(models.Model):
     requested_by = fields.Many2one('res.users', 'Solicitante', default=lambda s: s.env.user)
     date = fields.Date(default=fields.Date.context_today)
     note = fields.Text('Motivo')
+    return_reason = fields.Text('Motivo de devolucion', tracking=True)
     state = fields.Selection([
-        ('draft', 'Borrador'), ('to_approve', 'Por aprobar'), ('approved', 'Aprobada'),
+        ('draft', 'Borrador'), ('to_approve', 'Por revisar'), ('returned', 'Devuelta para correccion'), ('approved', 'Aprobada'),
         ('rfq', 'En cotizacion'), ('cancel', 'Cancelada')], default='draft', tracking=True)
     line_ids = fields.One2many('mabara.purchase.request.line', 'request_id', 'Materiales')
     purchase_ids = fields.One2many('purchase.order', 'purchase_request_id', 'Cotizaciones / OC')
@@ -36,7 +37,31 @@ class MabaraPurchaseRequest(models.Model):
         for r in self:
             if not r.line_ids:
                 raise UserError(_('La solicitud no tiene materiales.'))
+            # Politica 4: todo requerimiento de compra nace de una necesidad registrada en el sistema
+            if not r.service_order_id:
+                raise UserError(_('Politica 4: la solicitud de compra debe originarse en una Orden de Servicio '
+                                  'registrada.'))
+            # Politica 3: Almacen verifica la disponibilidad antes de gestionar una adquisicion
+            if r.service_order_id.state in ('draft', 'correction', 'issued', 'cancel'):
+                raise UserError(_('Politica 3: Almacen debe verificar la disponibilidad (existencias) de la OS %s '
+                                  'antes de gestionar la compra.') % r.service_order_id.name)
             r.state = 'to_approve'
+        return True
+
+    def action_return(self):
+        for r in self.filtered(lambda r: r.state == 'to_approve'):
+            if not r.return_reason:
+                raise UserError(_('Indique el "Motivo de devolucion" para que Almacen corrija la solicitud.'))
+            r.state = 'returned'
+            r.message_post(body=_('Solicitud no conforme, devuelta para correccion: %s') % r.return_reason)
+        return True
+
+    def action_resubmit(self):
+        for r in self.filtered(lambda r: r.state == 'returned'):
+            if not r.line_ids:
+                raise UserError(_('La solicitud no tiene materiales.'))
+            r.state = 'to_approve'
+            r.message_post(body=_('Solicitud corregida y reenviada a revision.'))
         return True
 
     def action_approve(self):

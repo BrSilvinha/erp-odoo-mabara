@@ -22,8 +22,12 @@
                 <header>
                     <button name="action_submit" type="object" string="Enviar a aprobacion" class="btn-primary"
                             invisible="state != 'draft'"/>
-                    <button name="action_approve" type="object" string="Aprobar" class="btn-primary"
+                    <button name="action_approve" type="object" string="Conforme - Aprobar" class="btn-primary"
                             invisible="state != 'to_approve'"/>
+                    <button name="action_return" type="object" string="Devolver para corrección"
+                            invisible="state != 'to_approve'"/>
+                    <button name="action_resubmit" type="object" string="Reenviar corregida" class="btn-primary"
+                            invisible="state != 'returned'"/>
                     <button name="action_create_rfq" type="object" string="Solicitar cotizaciones"
                             class="btn-primary" invisible="state != 'approved'"/>
                     <button name="action_cancel" type="object" string="Cancelar"
@@ -46,6 +50,7 @@
                         <group>
                             <field name="date"/>
                             <field name="note"/>
+                            <field name="return_reason" invisible="state not in ('to_approve', 'returned') and not return_reason"/>
                         </group>
                     </group>
                     <field name="line_ids">

@@ -12,4 +12,10 @@
         <field name="prefix">SC/</field>
         <field name="padding">5</field>
     </record>
+    <record id="seq_code_request" model="ir.sequence">
+        <field name="name">Solicitud de codigo de material</field>
+        <field name="code">mabara.code.request</field>
+        <field name="prefix">SCM/</field>
+        <field name="padding">5</field>
+    </record>
 </odoo>

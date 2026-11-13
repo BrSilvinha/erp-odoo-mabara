@@ -180,6 +180,108 @@ call("purchase.order", "button_confirm", [[rules[0]["order_id"][0]]])
 log("- RFQ originada por regla de reabastecimiento puede confirmarse sin solicitud manual (politica 4).")
 log("\n**RESULTADO C: OK**")
 
+# ======================================================================= ESCENARIO D (Fig. 1 y Fig. 3)
+def must_fail(model, method, ids, what):
+    try:
+        call(model, method, [ids])
+    except xmlrpc.client.Fault:
+        log("- %s: bloqueado correctamente" % what)
+        return
+    raise SystemExit("FALLO: no se bloqueo -> " + what)
+
+
+log("\n---\n## Escenario D (flujo Fig. 1) - Solicitud no conforme: correccion y reenvio")
+od1 = new_os("Instalacion de luminarias (Escenario D)", [("MAT-0005", 2)])
+must_fail("mabara.service.order", "action_request_correction", [od1], "Pedir correccion sin indicar el motivo")
+write("mabara.service.order", [od1], {"correction_note": "Falta indicar la ubicacion del servicio"})
+call("mabara.service.order", "action_request_correction", [[od1]])
+step(1, "Jefe de Operaciones solicita correccion -> %s / %s" % os_state(od1))
+assert os_state(od1)[1] == "correction"
+write("mabara.service.order", [od1], {"service_location": "Av. Ejemplo 123 (DEMO)", "project": "Proyecto DEMO"})
+call("mabara.service.order", "action_resubmit", [[od1]])
+step(2, "Area Comercial corrige y reenvia -> %s / %s" % os_state(od1))
+write("mabara.service.order", [od1], {"crew": "Cuadrilla 1 (DEMO)"})
+call("mabara.service.order", "action_issue", [[od1]])
+step(3, "Solicitud conforme: OS emitida con cuadrilla asignada -> %s / %s" % os_state(od1))
+assert os_state(od1)[1] == "issued"
+log("\n**RESULTADO D: OK**")
+
+# ======================================================================= ESCENARIO E (Fig. 2)
+log("\n---\n## Escenario E (flujo Fig. 2) - Solicitud de compra no conforme: devolucion y correccion")
+oe = new_os("Reposicion de tuberia (Escenario E)", [("MAT-0006", 10)])
+call("mabara.service.order", "action_issue", [[oe]])
+call("mabara.service.order", "action_check_stock", [[oe]])
+call("mabara.service.order", "action_create_purchase_request", [[oe]])
+pre = search("mabara.purchase.request", [["service_order_id", "=", oe]])[0]
+call("mabara.purchase.request", "action_submit", [[pre]])
+must_fail("mabara.purchase.request", "action_return", [pre], "Devolver solicitud sin indicar el motivo")
+write("mabara.purchase.request", [pre], {"return_reason": "Cantidad no coincide con el requerimiento"})
+call("mabara.purchase.request", "action_return", [[pre]])
+step(1, "Solicitud devuelta para correccion -> %s" % read("mabara.purchase.request", [pre], ["state"])[0]["state"])
+call("mabara.purchase.request", "action_resubmit", [[pre]])
+call("mabara.purchase.request", "action_approve", [[pre]])
+step(2, "Corregida, reenviada y aprobada -> %s" % read("mabara.purchase.request", [pre], ["state"])[0]["state"])
+assert read("mabara.purchase.request", [pre], ["state"])[0]["state"] == "approved"
+call("mabara.purchase.request", "action_cancel", [[pre]])
+call("mabara.service.order", "action_cancel", [[oe]])
+log("\n**RESULTADO E: OK**")
+
+# ======================================================================= ESCENARIO F (Fig. 3)
+log("\n---\n## Escenario F (flujo Fig. 3) - Devolucion de materiales no utilizados")
+f0 = stock("MAT-0005")["qty_available"]
+of = new_os("Mantenimiento de alumbrado (Escenario F)", [("MAT-0005", 10)])
+call("mabara.service.order", "action_issue", [[of]])
+call("mabara.service.order", "action_check_stock", [[of]])
+deliver(of)
+f1 = stock("MAT-0005")["qty_available"]
+log("Stock MAT-0005: %g -> %g tras entregar 10" % (f0, f1))
+ret = call("mabara.service.order", "action_return_materials", [[of]])
+rpk = ret["res_id"]
+mids = search("stock.move", [["picking_id", "=", rpk]])
+call("stock.move", "write", [mids, {"quantity": 4}])
+r = validate_picking(rpk)
+f2 = stock("MAT-0005")["qty_available"]
+log("Devolucion `%s` validada (4 unidades sin usar) -> **%s**; stock = %g" % (r["name"], r["state"], f2))
+assert r["state"] == "done" and f2 == f1 + 4
+call("mabara.service.order", "action_execute", [[of]])
+call("mabara.service.order", "action_close", [[of]])
+log("\n**RESULTADO F: OK**")
+
+# ======================================================================= ESCENARIO G (Fig. 3)
+log("\n---\n## Escenario G (flujo Fig. 3) - Material no codificado: solicitud de codigo al Administrador del ERP")
+uom = search("uom.uom", [["name", "=", "m"]])[0]
+cr = create("mabara.code.request", {"description": "Material DEMO (prueba de solicitud de codigo)",
+                                     "short_name": "DEMO", "uom_id": uom, "origin": "Guia DEMO"})
+call("mabara.code.request", "action_request", [[cr]])
+must_fail("mabara.code.request", "action_create_code", [cr], "Crear codigo sin asignar el codigo maestro")
+write("mabara.code.request", [cr], {"assigned_code": "MAT-DEMO-0001"})
+call("mabara.code.request", "action_create_code", [[cr]])
+call("mabara.code.request", "action_communicate", [[cr]])
+crr = read("mabara.code.request", [cr], ["name", "state", "product_tmpl_id"])[0]
+log("- Solicitud %s -> **%s**; material creado en el maestro: %s" % (crr["name"], crr["state"], crr["product_tmpl_id"][1]))
+assert crr["state"] == "communicated"
+call("product.template", "write", [[crr["product_tmpl_id"][0]], {"active": False}])
+log("- (El material DEMO se archiva para no ensuciar el maestro.)")
+log("\n**RESULTADO G: OK**")
+
+# ======================================================================= ESCENARIO H (Fig. 3)
+log("\n---\n## Escenario H (flujo Fig. 3) - Recepcion: mismo dia y diferencias comunicadas a Compras")
+rc_po = rules[0]["order_id"][0]
+rc = read("purchase.order", [rc_po], ["name", "picking_ids"])[0]
+rpk = rc["picking_ids"][0]
+yesterday = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
+write("stock.picking", [rpk], {"receipt_date": yesterday})
+must_fail("stock.picking", "button_validate", [rpk], "Registrar el ingreso con fecha de recepcion distinta a hoy")
+write("stock.picking", [rpk], {"receipt_date": datetime.date.today().isoformat(), "supplier_doc": "Guia DEMO T001-0001"})
+mids = search("stock.move", [["picking_id", "=", rpk]])
+call("stock.move", "write", [mids, {"quantity": 100}])
+r = validate_picking(rpk)
+note = read("stock.picking", [rpk], ["difference_note"])[0]["difference_note"]
+log("- Recepcion de %s: pedido 4398, recibido 100 -> diferencia registrada: `%s`" % (rc["name"], note))
+assert note and "100" in note
+log("- Se genera la entrega pendiente (backorder) y se comunica a Compras en la OC.")
+log("\n**RESULTADO H: OK**")
+
 # ======================================================================= POLITICAS
 log("\n---\n## Pruebas de politicas (deben ser rechazadas)")
 # Politica 8: salida sin OS
@@ -218,6 +320,27 @@ try:
 except xmlrpc.client.Fault:
     log("- Ejecutar una OS sin materiales entregados: bloqueado")
 call("mabara.service.order", "action_cancel", [[od]])
+# Politica 4/3: solicitud de compra sin OS o con OS sin verificar existencias
+pr_free = create("mabara.purchase.request", {"line_ids": [(0, 0, {"product_id": pid("MAT-0005"), "product_qty": 1})]})
+must_fail("mabara.purchase.request", "action_submit", [pr_free], "Politica 4: solicitud de compra sin OS")
+oi = new_os("Prueba politica 3", [("MAT-0005", 1)])
+call("mabara.service.order", "action_issue", [[oi]])
+pr_nv = create("mabara.purchase.request", {"service_order_id": oi,
+                                            "line_ids": [(0, 0, {"product_id": pid("MAT-0005"), "product_qty": 1})]})
+must_fail("mabara.purchase.request", "action_submit", [pr_nv], "Politica 3: comprar sin verificar existencias")
+call("mabara.service.order", "action_cancel", [[oi]])
+# Politica 7: recepcion sin Orden de Compra
+sup_loc = search("stock.location", [["usage", "=", "supplier"]], limit=1)[0]
+rt = search("stock.picking.type", [["code", "=", "incoming"], ["sequence_code", "=", "IN"]], limit=1)
+rtd = read("stock.picking.type", [rt[0]], ["default_location_dest_id"])[0]
+mv = {"product_id": pid("MAT-0005"), "product_uom_qty": 1, "product_uom": 1, "location_id": sup_loc,
+      "location_dest_id": rtd["default_location_dest_id"][0]}
+if "name" in call("stock.move", "fields_get", [], {"attributes": ["type"]}):
+    mv["name"] = "prueba politica 7"
+pk7 = create("stock.picking", {"picking_type_id": rt[0], "location_id": sup_loc,
+                                "location_dest_id": mv["location_dest_id"], "move_ids": [(0, 0, mv)]})
+call("stock.picking", "action_confirm", [[pk7]])
+must_fail("stock.picking", "button_validate", [pk7], "Politica 7: recepcion sin Orden de Compra")
 log("\n**RESULTADO POLITICAS: OK**")
 
 out = ROOT / "evidencias" / "escenarios.md"

@@ -12,8 +12,9 @@ MENU = [
         ('Existencias', ['stock.action_view_inventory_tree']),
         ('Transferencias', ['stock.action_picking_tree_all']),
         ('Reabastecimiento', ['stock.action_orderpoint_replenish']),
-        ('Reglas de reabastecimiento (ROP / EOQ)', ['stock.action_orderpoint']),
+        ('Reglas de reabastecimiento (ROP / EOQ)', ['mabara_service_order.action_orderpoint_mabara']),
         ('Ubicaciones', ['stock.action_location_form']),
+        ('Solicitudes de codigo de material', ['mabara_service_order.action_code_request']),
     ]),
     ('Ventas', [
         ('Ordenes de Servicio', ['mabara_service_order.action_service_order']),
@@ -74,9 +75,10 @@ def hide_native_apps(env):
 
 def post_init_hook(env):
     Menu = env['ir.ui.menu']
-    if Menu.search([('name', '=', 'MABARA'), ('parent_id', '=', False)]):
-        hide_native_apps(env)
-        return
+    # idempotente: si ya existe se reconstruye (permite actualizar el menu al actualizar el modulo)
+    old = Menu.with_context(active_test=False).search([('name', '=', 'MABARA'), ('parent_id', '=', False)])
+    if old:
+        Menu.with_context(active_test=False).search([('id', 'child_of', old.ids)]).unlink()
     root = Menu.create({'name': 'MABARA', 'sequence': 0})
     for seq, (section, items) in enumerate(MENU, start=1):
         children = []

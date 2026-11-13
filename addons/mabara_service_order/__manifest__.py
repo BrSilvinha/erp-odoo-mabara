@@ -12,6 +12,7 @@
         'data/stock_data.xml',
         'views/service_order_views.xml',
         'views/purchase_request_views.xml',
+        'views/code_request_views.xml',
         'views/product_views.xml',
         'views/menus.xml',
     ],

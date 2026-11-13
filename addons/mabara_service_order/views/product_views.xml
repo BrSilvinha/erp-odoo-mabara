@@ -6,31 +6,35 @@
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="Maestro MABARA / Politica de inventario" name="mabara_policy">
+                <page string="Inventario" name="mabara_policy">
                     <group>
-                        <group string="Maestro unico de materiales">
+                        <group name="mabara_inv_left">
+                            <field name="uom_id" string="Unidad de medida"/>
+                            <field name="categ_id" string="Grupo / familia"/>
+                            <field name="mabara_location_id"/>
+                            <field name="tracking" string="Método de control"/>
+                            <field name="item_type" string="Tipo de ítem"/>
                             <field name="abc_class"/>
-                            <field name="old_codes"/>
-                            <field name="short_name"/>
-                            <field name="item_type"/>
                         </group>
-                        <group string="Parametros del documento">
-                            <field name="annual_demand"/>
+                        <group name="mabara_inv_right" string="Parámetros de inventario">
+                            <field name="annual_demand" string="Demanda anual proyectada"/>
+                            <field name="eoq_official" string="EOQ (cantidad económica de pedido)"/>
+                            <field name="safety_stock_official" string="Stock de seguridad"/>
+                            <field name="reorder_point_official" string="Punto de reorden (ROP)"/>
+                            <field name="lead_time_months" string="Lead time (tiempo de entrega, meses)"/>
+                            <field name="service_z" string="Z (nivel de servicio 95%)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Datos de cálculo (documento)">
                             <field name="holding_rate"/>
                             <field name="order_cost"/>
                             <field name="monthly_demand"/>
                             <field name="monthly_sigma"/>
-                            <field name="lead_time_months"/>
-                            <field name="service_z"/>
+                            <field name="old_codes"/>
+                            <field name="short_name"/>
                         </group>
-                    </group>
-                    <group>
-                        <group string="Valores oficiales (documento)">
-                            <field name="eoq_official"/>
-                            <field name="safety_stock_official"/>
-                            <field name="reorder_point_official"/>
-                        </group>
-                        <group string="Verificacion con formulas">
+                        <group string="Verificación con fórmulas">
                             <field name="holding_cost"/>
                             <field name="eoq_check"/>
                             <field name="ss_check"/>
@@ -39,10 +43,40 @@
                         </group>
                     </group>
                     <button name="action_apply_inventory_policy" type="object" class="btn-primary"
-                            string="Aplicar politica a regla de reabastecimiento"
+                            string="Aplicar política a regla de reabastecimiento"
                             invisible="not reorder_point_official"/>
                 </page>
             </xpath>
         </field>
     </record>
+
+    <!-- Reglas de reabastecimiento con los parametros del documento (Tabla de politica ABC/EOQ/SS/ROP) -->
+    <record id="view_orderpoint_mabara_list" model="ir.ui.view">
+        <field name="name">stock.warehouse.orderpoint.mabara.list</field>
+        <field name="model">stock.warehouse.orderpoint</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list string="Reglas de reabastecimiento" create="1" edit="0">
+                <field name="m_code"/>
+                <field name="m_name"/>
+                <field name="m_uom"/>
+                <field name="m_abc" widget="badge" decoration-success="m_abc == 'A'"
+                       decoration-warning="m_abc == 'B'" decoration-info="m_abc == 'C'"/>
+                <field name="m_demand"/>
+                <field name="m_eoq"/>
+                <field name="m_ss"/>
+                <field name="m_rop"/>
+                <field name="m_lead"/>
+                <field name="m_state" widget="badge" decoration-success="m_state == 'Activo'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_orderpoint_mabara" model="ir.actions.act_window">
+        <field name="name">Reglas de reabastecimiento</field>
+        <field name="res_model">stock.warehouse.orderpoint</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('view_orderpoint_mabara_list')})]"/>
+    </record>
+
 </odoo>

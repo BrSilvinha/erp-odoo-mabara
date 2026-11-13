@@ -1,51 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Ficha del material con la distribucion del maestro MABARA (Tabla IX del documento).
-         La pagina original "Informacion general" se oculta (no se elimina) para no romper
-         las vistas heredadas de otros modulos. -->
+    <!-- Ficha del material (Tabla IX del documento): franja de indicadores y pestañas
+         Informacion general / Inventario / Compras / Ubicaciones / Contabilidad / Notas.
+         Las paginas nativas que sobran se ocultan (no se eliminan) para no romper otros modulos. -->
     <record id="product_template_form_mabara_general" model="ir.ui.view">
         <field name="name">product.template.form.mabara.general</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="priority">99</field>
         <field name="arch" type="xml">
+            <!-- Franja de indicadores bajo el titulo -->
+            <xpath expr="//notebook" position="before">
+                <div class="mabara_kpis" invisible="not eoq_official">
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value"><field name="annual_demand" readonly="1" class="oe_inline"/></span>
+                        <span class="mabara_kpi_label">Demanda anual proyectada</span>
+                    </div>
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value"><field name="eoq_official" readonly="1" class="oe_inline"/></span>
+                        <span class="mabara_kpi_label">EOQ (cantidad a pedir)</span>
+                    </div>
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value"><field name="safety_stock_official" readonly="1" class="oe_inline"/></span>
+                        <span class="mabara_kpi_label">Stock de seguridad</span>
+                    </div>
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value"><field name="reorder_point_official" readonly="1" class="oe_inline"/></span>
+                        <span class="mabara_kpi_label">Punto de reorden (ROP)</span>
+                    </div>
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value"><field name="lead_time_months" readonly="1" class="oe_inline"/> meses</span>
+                        <span class="mabara_kpi_label">Lead time (tiempo de entrega)</span>
+                    </div>
+                    <div class="mabara_kpi">
+                        <span class="mabara_kpi_value">Clase <field name="abc_class" readonly="1" class="oe_inline"/></span>
+                        <span class="mabara_kpi_label">Clasificacion ABC</span>
+                    </div>
+                </div>
+            </xpath>
+
             <xpath expr="//page[@name='general_information']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//page[@name='sales']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='variants']" position="attributes">
+                <attribute name="string">Variantes</attribute>
+            </xpath>
+            <xpath expr="//page[@name='inventory']" position="attributes">
+                <attribute name="string">Logistica</attribute>
+            </xpath>
+
             <xpath expr="//page[@name='general_information']" position="before">
                 <page string="Información general" name="mabara_general">
                     <group>
                         <group name="mabara_left">
+                            <field name="default_code" string="Código maestro"/>
+                            <field name="short_name" string="Descripción corta"/>
                             <field name="item_type" string="Tipo de ítem"/>
-                            <field name="route_ids" string="Política de inventario" widget="many2many_tags"/>
-                            <field name="default_code" string="Referencia interna"/>
-                            <field name="barcode" string="Código de barras"/>
                             <field name="categ_id" string="Grupo / Familia"/>
                             <field name="uom_id" string="Unidad de medida"/>
-                            <field name="uom_id" string="Unidad de medida de compra" readonly="1"/>
-                            <field name="currency_id" string="Moneda" readonly="1"/>
-                        </group>
-                        <group name="mabara_right">
-                            <field name="list_price" string="Precio de venta" widget="monetary"
-                                   options="{'currency_field': 'currency_id'}"/>
-                            <field name="taxes_id" string="Impuestos del cliente" widget="many2many_tags"/>
-                            <field name="standard_price" string="Costo" widget="monetary"
-                                   options="{'currency_field': 'currency_id'}"/>
-                            <field name="supplier_taxes_id" string="Impuestos del proveedor" widget="many2many_tags"/>
-                            <field name="categ_id" string="Categoría de producto"/>
-                            <field name="abc_class" string="Clasificación ABC"/>
-                            <field name="mabara_state" string="Estado"/>
+                            <field name="barcode" string="Código de barras"/>
                             <field name="old_codes" string="Código(s) anterior(es)"/>
                         </group>
-                    </group>
-                    <group>
-                        <field name="short_name" string="Descripción corta"/>
-                        <field name="description" string="Descripción interna" nolabel="0"/>
+                        <group name="mabara_right">
+                            <field name="currency_id" string="Moneda" invisible="1"/>
+                            <field name="list_price" string="Precio de venta" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="standard_price" string="Costo" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="taxes_id" string="Impuestos del cliente" widget="many2many_tags"/>
+                            <field name="supplier_taxes_id" string="Impuestos del proveedor" widget="many2many_tags"/>
+                            <field name="abc_class" string="Clasificación ABC"/>
+                            <field name="mabara_state" string="Estado"/>
+                        </group>
                     </group>
                 </page>
             </xpath>
-            <xpath expr="//page[@name='mabara_policy']" position="attributes">
-                <attribute name="string">Política de inventario (EOQ / SS / ROP)</attribute>
+
+            <!-- Orden de pestañas: General, Inventario, Compras, Ubicaciones, Contabilidad, Notas -->
+            <xpath expr="//page[@name='general_information']" position="before">
+                <xpath expr="//page[@name='mabara_policy']" position="move"/>
+                <xpath expr="//page[@name='purchase']" position="move"/>
+                <page string="Ubicaciones" name="mabara_locations">
+                    <group>
+                        <group string="Ubicacion y existencias">
+                            <field name="mabara_location_id"/>
+                            <field name="qty_available" string="Cantidad en mano"/>
+                            <field name="virtual_available" string="Cantidad prevista"/>
+                        </group>
+                    </group>
+                    <button name="action_open_quants" type="object" class="btn-secondary"
+                            string="Ver existencias por ubicacion"/>
+                </page>
+                <page string="Contabilidad" name="mabara_accounting">
+                    <group>
+                        <group string="Cuentas">
+                            <field name="property_account_income_id" string="Cuenta de ingresos"/>
+                            <field name="property_account_expense_id" string="Cuenta de gastos"/>
+                        </group>
+                        <group string="Impuestos">
+                            <field name="taxes_id" string="Impuestos del cliente" widget="many2many_tags"/>
+                            <field name="supplier_taxes_id" string="Impuestos del proveedor" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="Notas" name="mabara_notes">
+                    <group>
+                        <field name="description" string="Observaciones del maestro" placeholder="Observaciones..."/>
+                        <field name="description_purchase" string="Nota para compras"/>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>

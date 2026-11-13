@@ -14,6 +14,8 @@
         ],
         'web.assets_backend': [
             'mabara_theme/static/src/scss/mabara.scss',
+            'mabara_theme/static/src/js/sidebar.js',
+            'mabara_theme/static/src/xml/sidebar.xml',
         ],
     },
     'post_init_hook': 'post_init_hook',

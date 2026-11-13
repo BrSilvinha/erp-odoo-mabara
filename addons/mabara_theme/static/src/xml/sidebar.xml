@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="mabara_theme.Sidebar">
+        <nav class="mabara_sidebar" aria-label="Menu MABARA">
+            <t t-foreach="items" t-as="item" t-key="item.label">
+                <button class="mabara_nav_item" type="button"
+                        t-att-class="{'active': isActive(item)}"
+                        t-on-click="() => this.onItem(item)">
+                    <i t-att-class="'fa ' + item.icon"/>
+                    <span t-esc="item.label"/>
+                    <i t-if="item.children" class="fa mabara_caret"
+                       t-att-class="state.open === item.label ? 'fa-chevron-down' : 'fa-chevron-right'"/>
+                </button>
+                <t t-if="item.children and state.open === item.label">
+                    <button t-foreach="item.children" t-as="child" t-key="child.label"
+                            class="mabara_nav_child" type="button"
+                            t-att-class="{'active': state.current === child.action}"
+                            t-on-click="() => this.go(child.action)">
+                        <span t-esc="child.label"/>
+                    </button>
+                </t>
+            </t>
+        </nav>
+    </t>
+</templates>

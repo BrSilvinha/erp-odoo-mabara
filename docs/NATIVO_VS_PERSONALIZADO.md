@@ -14,7 +14,9 @@
 | **Solicitud de compra** interna con revisión/aprobación (etapa 6) | Modelo `mabara.purchase.request` (Community no trae solicitudes internas) | **Personalizado** |
 | Trazabilidad OS ↔ requerimiento ↔ solicitud ↔ OC ↔ recepción ↔ despacho | Campos `service_order_id` / `purchase_request_id` en picking y OC | **Personalizado** |
 | Menú horizontal único, colores, logo y ficha de material (`mabara_theme`) | Módulo de tema + vista heredada + menús que reutilizan acciones nativas | **Personalizado (interfaz)** |
-| Políticas 4, 5 y 8 | Validaciones en OC y despacho | **Personalizado** |
+| Corrección de solicitud de OS, asignación de cuadrilla, devolución de solicitud de compra, devolución de materiales, solicitud de código de material, recepción mismo día y diferencias (Fig. 1–3) | Estados/acciones en `mabara.service.order`, `mabara.purchase.request`, `mabara.code.request` y campos en `stock.picking` | **Personalizado** |
+| Menú lateral, franja de indicadores, pestañas y lista de reglas de reabastecimiento | Componente OWL `MabaraSidebar`, vistas heredadas | **Personalizado (interfaz)** |
+| Políticas 3, 4, 5, 7 y 8 | Validaciones en solicitud de compra, OC, recepción y despacho (las políticas 1, 2 y 6 se cumplen por el diseño del flujo; la 9 y la 10 son reglas de conducta y no se pueden bloquear por código) | **Personalizado** |
 
 ## Decisiones técnicas (no especificadas en el documento)
 1. **Odoo 19.0** (no 20.0): una versión con más de un año de madurez y etiqueta Docker fija.

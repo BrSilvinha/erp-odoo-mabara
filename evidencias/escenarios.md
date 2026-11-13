@@ -1,5 +1,5 @@
 # Evidencias de simulacion - MABARA ERP (Odoo 19 Community)
-Generado: 2026-11-12 11:17
+Generado: 2026-11-13 01:34
 
 > Stock inicial, proveedores, precios de MAT-0006 y cliente son datos DEMO (no provienen del documento).
 
@@ -82,9 +82,58 @@ Programador de reabastecimiento ejecutado. RFQ generadas por la regla:
 **RESULTADO C: OK**
 
 ---
+## Escenario D (flujo Fig. 1) - Solicitud no conforme: correccion y reenvio
+- Pedir correccion sin indicar el motivo: bloqueado correctamente
+
+**Paso 1.** Jefe de Operaciones solicita correccion -> OS/00004 / correction
+
+**Paso 2.** Area Comercial corrige y reenvia -> OS/00004 / draft
+
+**Paso 3.** Solicitud conforme: OS emitida con cuadrilla asignada -> OS/00004 / issued
+
+**RESULTADO D: OK**
+
+---
+## Escenario E (flujo Fig. 2) - Solicitud de compra no conforme: devolucion y correccion
+- Devolver solicitud sin indicar el motivo: bloqueado correctamente
+
+**Paso 1.** Solicitud devuelta para correccion -> returned
+
+**Paso 2.** Corregida, reenviada y aprobada -> approved
+
+**RESULTADO E: OK**
+
+---
+## Escenario F (flujo Fig. 3) - Devolucion de materiales no utilizados
+- Despacho `WH/OSOUT/00005` -> estado **done**
+Stock MAT-0005: 500 -> 490 tras entregar 10
+Devolucion `WH/OSRET/00001` validada (4 unidades sin usar) -> **done**; stock = 494
+
+**RESULTADO F: OK**
+
+---
+## Escenario G (flujo Fig. 3) - Material no codificado: solicitud de codigo al Administrador del ERP
+- Crear codigo sin asignar el codigo maestro: bloqueado correctamente
+- Solicitud SCM/00001 -> **communicated**; material creado en el maestro: [MAT-DEMO-0001] Material DEMO (prueba de solicitud de codigo)
+- (El material DEMO se archiva para no ensuciar el maestro.)
+
+**RESULTADO G: OK**
+
+---
+## Escenario H (flujo Fig. 3) - Recepcion: mismo dia y diferencias comunicadas a Compras
+- Registrar el ingreso con fecha de recepcion distinta a hoy: bloqueado correctamente
+- Recepcion de P00003: pedido 4398, recibido 100 -> diferencia registrada: `[MAT-0001] Cable concéntrico de aluminio 2x6 mm²: pedido 4400.0, recibido 100.0`
+- Se genera la entrega pendiente (backorder) y se comunica a Compras en la OC.
+
+**RESULTADO H: OK**
+
+---
 ## Pruebas de politicas (deben ser rechazadas)
 - Politica 8 (salida sin OS): bloqueada -> `<Fault 2: 'Politica 8: toda salida de materiales debe estar asociada a una Orden de Servicio.'>`
 - Politicas 4/5 (OC sin solicitud ni regla): bloqueada
 - Ejecutar una OS sin materiales entregados: bloqueado
+- Politica 4: solicitud de compra sin OS: bloqueado correctamente
+- Politica 3: comprar sin verificar existencias: bloqueado correctamente
+- Politica 7: recepcion sin Orden de Compra: bloqueado correctamente
 
 **RESULTADO POLITICAS: OK**
