@@ -51,10 +51,12 @@ El script hace, en orden:
 2. Levanta PostgreSQL 16 y Odoo 19.0 con Docker Compose (la primera vez descarga ~3.5 GB).
 3. Crea la base de datos `mabara_erp` (idioma es_PE, país Perú, moneda PEN).
 4. Instala los módulos: Inventario, Compras, Ventas, Contabilidad (localización Perú), acuerdos de compra y los dos módulos del proyecto (`mabara_service_order`, `mabara_theme`).
-5. Carga los datos: 14 familias, 11 materiales del documento, parámetros EOQ/SS/ROP, reglas de reabastecimiento, ubicaciones, proveedores, cliente y stock **DEMO**.
-6. Ejecuta los escenarios A, B y C y las pruebas de políticas, y escribe el resultado en `evidencias\escenarios.md`.
+5. Carga los datos reales: 13 familias, **257 materiales** de `data\materiales_257.csv` (MABARA_257.xlsx) con sus parámetros EOQ/SS/ROP, y 198 reglas de reabastecimiento (modo manual). **No** crea proveedores, clientes, ubicaciones, stock ni órdenes de servicio.
+6. **Solo con `-Demo`:** crea datos de prueba (ubicaciones, 2 proveedores, cliente y stock) y ejecuta los escenarios A–H y las pruebas de políticas, y escribe el resultado en `evidencias\escenarios.md`.
 
-Al terminar verás algo así:
+Para probar el flujo completo sin cargar datos reales, ejecuta `powershell -ExecutionPolicy Bypass -File scripts\setup_all.ps1 -Reset -Demo`. **No uses `-Demo` con datos reales.** Para operar con datos reales, carga lo que falta siguiendo el manual (`docs\Manual_de_usuario_ERP_MABARA.pdf`, sección 4).
+
+Al terminar con `-Demo` verás algo así:
 
 ```
 RESULTADO A: OK
@@ -66,7 +68,7 @@ Listo: http://localhost:8069
 Usuario: admin@mabara.demo   Clave: ********   (tambien en el archivo .env)
 ```
 
-> ⚠ Ejecutar el script **por segunda vez** vuelve a correr los escenarios y duplica esas órdenes de ejemplo. Si quieres empezar limpio usa `-Reset` (sección 7).
+> ⚠ Con `-Demo`, ejecutar el script **por segunda vez** vuelve a correr los escenarios y duplica esas órdenes de ejemplo. Si quieres empezar limpio usa `-Reset` (sección 7), que **borra toda la base** de este proyecto.
 
 ---
 
@@ -156,15 +158,16 @@ docker compose down -v
 ```
 addons/mabara_service_order   Orden de Servicio, solicitud de compra, políticas y campos EOQ/SS/ROP
 addons/mabara_theme           Menú horizontal, colores, logo y ficha de material
-data/                         Maestro (11 materiales), familias ABC, parámetros, plantilla de importación
-scripts/                      00 claves · 01 base de datos · 02 carga · 03 escenarios · setup_all.ps1
-docs/                         Guía de demostración, nativo vs. personalizado, comandos y cambios
+data/                         materiales_257.csv (maestro real) y datos de referencia del documento académico
+scripts/                      00 claves · 01 base de datos · 02 carga · 03 escenarios · 05 fotos · 06 demo · 07 reabastecimiento · setup_all.ps1
+docs/                         Manual de usuario (PDF), guía de demostración, nativo vs. personalizado, comandos y cambios
 evidencias/escenarios.md      Resultado de las simulaciones
 docker-compose.yml            Odoo 19.0 + PostgreSQL 16 (volúmenes persistentes, puerto 8069)
 ```
 
 **Importante:**
-- Stock inicial, proveedores, precios de MAT-0006 y cliente son datos **DEMO** (no vienen del documento).
-- El maestro completo son 257 materiales; el documento solo muestra 11, que son los que se cargan. Para agregar más usa `data\plantilla_importacion_odoo.csv` (Inventario ▸ Productos ▸ Importar).
+- Se cargan los 257 materiales reales (`data\materiales_257.csv`). Faltan por cargar ubicaciones, proveedores con precios, clientes, stock inicial y la clasificación ABC (ver el manual, sección 4). El costo unitario del Excel está rotulado «sim.» (simulado): confirmar que es real.
+- Los datos de prueba (ubicaciones, proveedores, cliente, stock) solo se crean con `-Demo` (`scripts\06_demo_data.py`).
+- Con stock y proveedores cargados, activa la reposición automática con `python scripts\07_activar_reabastecimiento.py`.
 - El documento académico base (`ERP.pdf`) **no** está en el repositorio.
 - Documentación detallada de qué es nativo de Odoo y qué es personalizado: `docs\NATIVO_VS_PERSONALIZADO.md`.

@@ -29,6 +29,7 @@
 8. **PostgreSQL** no se publica al host (el 5432 ya estaba ocupado por otro proyecto); sólo Odoo accede.
 
 ## Datos
-- **Del documento**: 11 materiales de la Tabla V, 14 familias y ABC (Tabla IV), parámetros de MAT-0001/2/3 (Tablas XI–XIII), costos S/ 6.50, 6.20, 6.10.
-- **DEMO (no del documento)**: stock inicial, ubicaciones, 2 proveedores (precios de MAT-0001..3 = costo del documento y +5 %; MAT-0006: S/ 12.50 y 11.80), cliente.
-- **Pendiente**: los otros 246 registros del maestro (257 en total), costos de los demás materiales y series de demanda (Anexos) no están en el PDF. Plantilla: `data\plantilla_importacion_odoo.csv`.
+- **Cargado (real)**: los 257 materiales de `MABARA_257.xlsx` (`data/materiales_257.csv`): descripción, 13 familias, unidad, costo (rotulado «sim.» en el Excel), demanda, desviación, costo de pedido, tasa de mantenimiento, lead time, Z, EOQ, SS y ROP. 198 reglas de reabastecimiento en modo manual (los 59 materiales MAT-0199..0257 tienen ROP = 0).
+- **No incluido en el Excel (vacío)**: clasificación ABC, proveedores y sus precios, clientes, ubicaciones, stock inicial.
+- **Datos DEMO (opcional)**: `scripts/06_demo_data.py` con `setup_all.ps1 -Demo` (ubicaciones, 2 proveedores, cliente y stock de MAT-0001..0011) y los escenarios A–H. Sin `-Demo` no se crea nada de esto.
+- Ver `docs/Manual_de_usuario_ERP_MABARA.pdf`, sección 3, para cargar lo que falta.

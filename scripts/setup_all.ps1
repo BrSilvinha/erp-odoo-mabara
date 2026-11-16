@@ -1,6 +1,7 @@
 # Reconstruye todo el entorno MABARA ERP desde cero (Fases 3-8).
 # ATENCION: -Reset elimina los volumenes de ESTE proyecto (mabara_erp_*), no los de otros proyectos.
-param([switch]$Reset)
+# -Demo agrega datos de prueba (proveedores, cliente, stock) y ejecuta los escenarios; sin -Demo solo se cargan los 257 materiales.
+param([switch]$Reset, [switch]$Demo)
 $ErrorActionPreference = "Continue"
 Set-Location (Split-Path $PSScriptRoot -Parent)
 & (Join-Path $PSScriptRoot "00_init_env.ps1")
@@ -21,7 +22,11 @@ do { Start-Sleep 3; try { $ok = (Invoke-WebRequest http://localhost:8069/web/log
 
 python scripts/02_configure_and_load.py
 python scripts/05_load_product_images.py
-python scripts/03_run_scenarios.py
+if ($Demo) {
+    # Opcional: datos de prueba (NO reales) y escenarios A-H
+    python scripts/06_demo_data.py
+    python scripts/03_run_scenarios.py
+}
 $envv = @{}; Get-Content .env | Where-Object { $_ -match "=" } | ForEach-Object { $k, $v = $_ -split "=", 2; $envv[$k] = $v }
 Write-Host "Listo: http://localhost:8069"
 Write-Host "Usuario: $($envv['ODOO_USER'])   Clave: $($envv['ODOO_USER_PASSWORD'])   (tambien en el archivo .env)"
