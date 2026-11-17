@@ -39,7 +39,9 @@ Si Git pide iniciar sesión, usa tu cuenta de GitHub (se abre el navegador). Alt
 
 ## 3. Instalar todo con un solo comando
 
-Desde la carpeta del proyecto, en **PowerShell**:
+**Forma rápida:** haz doble clic en **`INSTALAR.bat`** (en la carpeta del proyecto). Comprueba que estén Docker y Python, instala todo y abre el navegador. Para encender el sistema en otra ocasión, doble clic en **`INICIAR.bat`**.
+
+O, a mano, desde la carpeta del proyecto en **PowerShell**:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\setup_all.ps1
