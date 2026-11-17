@@ -25,7 +25,11 @@ Enlaces: [Docker Desktop](https://www.docker.com/products/docker-desktop/) · [G
 
 ## 2. Descargar el proyecto
 
-El repositorio es **privado**: el dueño debe invitarte primero (ver sección 9) y aceptar la invitación que llega a tu correo de GitHub.
+El repositorio es **público**: no necesitas cuenta de GitHub ni invitación.
+
+**Sin Git:** en <https://github.com/BrSilvinha/erp-odoo-mabara> pulsa **Code ▸ Download ZIP**, descomprime la carpeta y salta a la sección 3 (solo necesitas Docker Desktop y Python). Si Windows muestra «Windows protegió su PC» al abrir `INSTALAR.bat`, pulsa **Más información ▸ Ejecutar de todos modos**.
+
+**Con Git:**
 
 ```powershell
 cd $HOME\Documents
